@@ -47,7 +47,7 @@
       packages = forAllSystems (pkgs: _system: import ./default.nix { inherit pkgs; });
 
       nixosModules = {
-        stalwart = ./modules/stalwart;
+        stalwart = ./modules/stalwart.nix;
         default = self.nixosModules.stalwart;
       };
 
