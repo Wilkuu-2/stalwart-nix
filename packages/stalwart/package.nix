@@ -33,12 +33,11 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   # cargoHash = "sha256-xp0Ds5vpB9lECmBkMbeHkeprzWMt6oB2gR2AZj6plPY=";
-  cargoLock.lockFile = "${finalAttrs.src}/Cargo.lock";
-  outputHashes = {
-    "opentelemetry-0.31.0" = "sha256-6qbfRpD3Q0Q942V/MuxFb8hyseIgdXjEMAwyqtIxlRI=";
-  };
-  cargoLock.outputHashes = {
-    "opentelemetry-0.31.0" = "sha256-6qbfRpD3Q0Q942V/MuxFb8hyseIgdXjEMAwyqtIxlRI=";
+  cargoLock = {
+    lockFile = "${finalAttrs.src}/Cargo.lock";
+    outputHashes = {
+      "opentelemetry-0.31.0" = "sha256-6qbfRpD3Q0Q942V/MuxFb8hyseIgdXjEMAwyqtIxlRI=";
+    };
   };
 
   # phases = [

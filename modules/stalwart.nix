@@ -94,8 +94,8 @@ let
   planFileCreateAndPost = (mkPlan "create-post" (idempotentCreateLines ++ cfg.configPlanPost));
 
   configFile = (pkgs.formats.json { }).generate "config.json" cfg.config;
-  stalwart_pkg = (pkgs.callPackage ../.. { }).stalwart16;
-  stalwart_cli_pkg = (pkgs.callPackage ../.. { }).stalwart16-cli;
+  stalwart_pkg = (pkgs.callPackage ../default.nix { }).stalwart16;
+  stalwart_cli_pkg = (pkgs.callPackage ../default.nix { }).stalwart16-cli;
   stalwart_webui_pkgs = stalwart_pkg.webui;
 in
 {
