@@ -9,15 +9,15 @@
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "stalwart-cli";
-  version = "1.0.7";
+  version = "1.0.8";
   src = fetchFromGitHub {
     owner = "stalwartlabs";
     repo = "cli";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-34paJniHaVTLLxW6hRNmpANgj3/6aQkYhhW3Pg0dEek=";
+    hash = "sha256-teQB+6ZPEH3RXxG8WX4L67ckLCTYfMF4xaiz3S074b0=";
   };
 
-  cargoHash = "sha256-c3wAT1I8Ym8UaIG26qv3tih++y5GWqfKuNzCuU7yUZE=";
+  cargoHash = "sha256-yMfWFTXV1gXPqo2OOAN/Fkym9UiHjXDX0tAJOCF2p4U=";
 
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [ openssl ];
