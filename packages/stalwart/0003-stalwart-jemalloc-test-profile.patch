@@ -1,0 +1,14 @@
+diff --git a/Cargo.toml b/Cargo.toml
+index 320e80ba..a35ac54e 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -63,6 +63,9 @@ debug-assertions = true
+ overflow-checks = true
+ rpath = false
+ 
++[profile.test.package]
++jemalloc-sys = {opt-level = 3}
++
+ [profile.bench]
+ opt-level = 3
+ debug = false
