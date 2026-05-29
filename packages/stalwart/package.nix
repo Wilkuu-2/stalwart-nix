@@ -20,12 +20,12 @@
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "stalwart" + (lib.optionalString stalwartEnterprise "-enterprise");
-  version = "0.16.6";
+  version = "0.16.7";
   src = fetchFromGitHub {
     owner = "stalwartlabs";
     repo = "stalwart";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-eGCYb8SiqZn5yqqTEzG+yLCuQYMcH0raH1fAvVDERPY=";
+    hash = "sha256-wL6cWEv3pc5v833OXbMjZrlbqXcvrCWA4NI1n897CxU=";
   };
 
   patches = [
@@ -34,6 +34,9 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   # cargoHash = "sha256-xp0Ds5vpB9lECmBkMbeHkeprzWMt6oB2gR2AZj6plPY=";
   cargoLock.lockFile = "${finalAttrs.src}/Cargo.lock";
+  outputHashes = {
+    "opentelemetry-0.31.0" = "sha256-6qbfRpD3Q0Q942V/MuxFb8hyseIgdXjEMAwyqtIxlRI=";
+  };
   cargoLock.outputHashes = {
     "opentelemetry-0.31.0" = "sha256-6qbfRpD3Q0Q942V/MuxFb8hyseIgdXjEMAwyqtIxlRI=";
   };
