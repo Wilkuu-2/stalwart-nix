@@ -70,21 +70,24 @@ let
       create_line
     ];
 
-  webuiCreateLine = {
-    object = "Application";
-    deleteBy = null;
-    value."webui-app" = {
-      enabled = true;
-      description = "Web admin app for stalwart";
-      resourceUrl = "file://${cfg.webuiPackage}";
-      urlPrefix = toJMAPStringArray [
-        "/admin"
-        "/account"
-      ];
-    };
-  };
+  # TODO: This is commented out because stalwart does not like to seem taking a nixpkgs path.
+  #webuiCreateLine = {
+  #  object = "Application";
+  #  deleteBy = null;
+  #  value."webui-app" = {
+  #    enabled = true;
+  #    description = "Web admin app for stalwart";
+  #    resourceUrl = "file://${cfg.webuiPackage}";
+  #    urlPrefix = toJMAPStringArray [
+  #      "/admin"
+  #      "/account"
+  #    ];
+  #  };
+  #};
   idempotentCreateLines = builtins.concatLists (
-    map mkIdempotentCreateLine (cfg.idempotentCreate ++ [ webuiCreateLine ])
+    # 
+    # map mkIdempotentCreateLine (cfg.idempotentCreate ++ [ webuiCreateLine ])
+    map mkIdempotentCreateLine cfg.idempotentCreate
   );
   fixupOp = 
     op: {
