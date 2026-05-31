@@ -8,7 +8,7 @@ with lib;
 let
   cfg = config.stalwart-nix.stalwart;
   bareSubmodule = o: types.submodule { options = o; };
-  toJMAPStringArray = lst: lib.genAttrs lst (_item: true);
+  # toJMAPStringArray = lst: lib.genAttrs lst (_item: true);
   planLineType = bareSubmodule {
     "@type" = mkOption {
       type = types.enum [
@@ -25,10 +25,15 @@ let
       type = types.attrs;
       description = "Filter, Create or Patch values";
     };
+    id = mkOption {
+      type = types.nullOr types.str;
+      default = null; 
+      description = "Id for update calls"; 
+    };
   };
   idempotentCreateLineType = bareSubmodule {
     deleteBy = mkOption {
-      type = types.str;
+      type = types.nullOr types.str;
       description = "The name of the field you want to filter by for object destruction";
       default = "name";
     };
@@ -81,12 +86,19 @@ let
   idempotentCreateLines = builtins.concatLists (
     map mkIdempotentCreateLine (cfg.idempotentCreate ++ [ webuiCreateLine ])
   );
+  fixupOp = 
+    op: {
+      inherit (op) object;
+      value = op.value or {}; 
+      "@type" = op."@type"; 
+    } // (if op."@type" == "update" then { inherit (op) id; } else {}); 
+
   mkPlan =
     name: rules:
     pkgs.writeTextFile {
       name = "stalwart-plan-${name}.ndjson";
       text = (
-        lib.concatMapStringsSep "\n" (op: builtins.toJSON op) rules # (cfg.configPlanPre ++ idempotentCreateLines ++ cfg.configPlanPost)
+        lib.concatMapStringsSep "\n" (op: builtins.toJSON (fixupOp op)) rules # (cfg.configPlanPre ++ idempotentCreateLines ++ cfg.configPlanPost)
       );
     };
 
@@ -250,6 +262,7 @@ in
       description = "Stalwart webui built in nix";
     };
 
+    # TODO: Get rid of this and put the functions somewhere nice
     toolbox = mkOption {
       type = types.attrs;
       default = {
@@ -317,12 +330,12 @@ in
           Restart = "on-failure";
           RestartSec = 5;
           SyslogIdentifier = "stalwart";
-          Environment = (
+          Environment = [(
             if cfg.startupMode == "bootstrap" then
               "STALWART_BOOTSTRAP=1"
             else
               (if cfg.startupMode == "recovery" then "STALWART_RECOVERY=1" else "")
-          );
+          )];
           EnvironmentFile = (
             if cfg.startupMode == "normal" then cfg.credentialsFile else cfg.recoveryCredentialsFile
           );
@@ -330,13 +343,10 @@ in
           ExecStart = [
             "${lib.getExe cfg.package} --config=${configFile}"
           ];
-          #ReadWritePaths = [
-          #  cfg.dataDir
-          #];
+     
           CacheDirectory = "stalwart";
           StateDirectory = "stalwart";
 
-          # Upstream uses "stalwart" as the username since 0.12.0
           User = cfg.user;
           Group = cfg.group;
 
