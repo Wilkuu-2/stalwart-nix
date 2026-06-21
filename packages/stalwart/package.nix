@@ -20,12 +20,12 @@
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "stalwart" + (lib.optionalString stalwartEnterprise "-enterprise");
-  version = "0.16.7";
+  version = "0.16.10";
   src = fetchFromGitHub {
     owner = "stalwartlabs";
     repo = "stalwart";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-wL6cWEv3pc5v833OXbMjZrlbqXcvrCWA4NI1n897CxU=";
+    hash = "sha256-zP2FwRX9eaP8xn8WElf/1N4doHnvZ4rKQLYrUDoYwkQ=";
   };
 
   patches = [
