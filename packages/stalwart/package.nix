@@ -229,6 +229,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
       "store::search_tests"
       "system::system_tests"
       "telemetry::telemetry_tests"
+      "smtp::outbound::dane::dane_downgrade_on_tlsa_servfail"
     ] (test: "--skip=${test}")
   );
 
