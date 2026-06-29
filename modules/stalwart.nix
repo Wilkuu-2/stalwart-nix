@@ -27,8 +27,8 @@ let
     };
     id = mkOption {
       type = types.nullOr types.str;
-      default = null; 
-      description = "Id for update calls"; 
+      default = null;
+      description = "Id for update calls";
     };
   };
   idempotentCreateLineType = bareSubmodule {
@@ -85,16 +85,18 @@ let
   #  };
   #};
   idempotentCreateLines = builtins.concatLists (
-    # 
+    #
     # map mkIdempotentCreateLine (cfg.idempotentCreate ++ [ webuiCreateLine ])
     map mkIdempotentCreateLine cfg.idempotentCreate
   );
-  fixupOp = 
-    op: {
+  fixupOp =
+    op:
+    {
       inherit (op) object;
-      value = op.value or {}; 
-      "@type" = op."@type"; 
-    } // (if op."@type" == "update" then { inherit (op) id; } else {}); 
+      value = op.value or { };
+      "@type" = op."@type";
+    }
+    // (if op."@type" == "update" then { inherit (op) id; } else { });
 
   mkPlan =
     name: rules:
@@ -128,6 +130,12 @@ in
       type = types.str;
       description = "Url for the config utility to use.";
       default = "http://localhost:8080";
+    };
+    doConfig = mkOption {
+      type = types.bool;
+      default = cfg.configPlanPre != [ ] && cfg.configPlanPost != [ ] && cfg.idempotentCreate != [ ];
+      description = "Whenever to set up and run stalwart-bootstrap";
+      example = true;
     };
     configPlanPre = mkOption {
       type = types.listOf planLineType;
@@ -280,7 +288,7 @@ in
 
   config = lib.mkIf cfg.enable {
     systemd.services = {
-      stalwart-bootstrap = {
+      stalwart-bootstrap = lib.mkIf cfg.doConfig {
         description = "Plan configuration for stalwart";
         wantedBy = [ "multi-user.target" ];
         after = [
@@ -333,12 +341,14 @@ in
           Restart = "on-failure";
           RestartSec = 5;
           SyslogIdentifier = "stalwart";
-          Environment = [(
-            if cfg.startupMode == "bootstrap" then
-              "STALWART_BOOTSTRAP=1"
-            else
-              (if cfg.startupMode == "recovery" then "STALWART_RECOVERY=1" else "")
-          )];
+          Environment = [
+            (
+              if cfg.startupMode == "bootstrap" then
+                "STALWART_BOOTSTRAP=1"
+              else
+                (if cfg.startupMode == "recovery" then "STALWART_RECOVERY=1" else "")
+            )
+          ];
           EnvironmentFile = (
             if cfg.startupMode == "normal" then cfg.credentialsFile else cfg.recoveryCredentialsFile
           );
@@ -346,7 +356,7 @@ in
           ExecStart = [
             "${lib.getExe cfg.package} --config=${configFile}"
           ];
-     
+
           CacheDirectory = "stalwart";
           StateDirectory = "stalwart";
 

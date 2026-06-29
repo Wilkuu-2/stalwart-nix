@@ -40,14 +40,15 @@ rustPlatform.buildRustPackage (finalAttrs: {
     };
   };
 
-  # phases = [
-  #   "unpackPhase"
-  #   "patchPhase"
-  #   "checkPhase"
-  #   "buildPhase"
-  #   "installPhase"
-  #   "fixupPhase"
-  # ];
+  # Stalwart seems to re-compile everything for it's check phase, so this workaround checks first in case a regression/bad test shows up
+  phases = [
+    "unpackPhase"
+    "patchPhase"
+    "checkPhase"
+    "buildPhase"
+    "installPhase"
+    "fixupPhase"
+  ];
 
   depsBuildBuild = [
     pkg-config
@@ -110,8 +111,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
   preCheck = ''
     export STORE=Sqlite
     export COORDINATOR=Default
-    export SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt
-    export NIX_SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt
+    #export SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt
+    #export NIX_SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt
   '';
   checkFlags = (
     lib.forEach [
@@ -234,7 +235,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   );
 
   doCheck = !(stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isAarch64);
-  checkType = "test";
+  # checkType = "test";
 
   __darwinAllowLocalNetworking = true;
 
