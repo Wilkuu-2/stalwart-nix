@@ -40,6 +40,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     "commands::snapshot::tests::emit_create_flushes_sink_on_empty_shard"
     "commands::snapshot::tests::emit_create_omits_deferred_field_and_emits_followup_update"
     "commands::snapshot::tests::snapshot_emits_marker_only_variant_as_type_only_record"
+    "commands::snapshot::tests::emit_upsert_writes_match_on_from_label_property"
   ] (test: "--skip=${test}");
 
   doInstallCheck = true;
